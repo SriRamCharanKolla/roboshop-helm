@@ -1,0 +1,72 @@
+# ==============================================================================
+# HELM TEMPLATE: CATALOGUE DEPLOYMENT (roboshop-helm/catalogue/templates/deployment.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Manages the stateless Catalogue Node.js microservice Pod lifecycle.
+# - Dynamically interpolates `.Values.deployment.replicas`, `.Values.deployment.imageName`,
+#   and `.Values.deployment.imageVersion` from 'catalogue/values.yaml'.
+# - Configures health monitoring (readinessProbe, livenessProbe) and injects database
+#   configuration via ConfigMap.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue                  # Deployment workload name
+  namespace: roboshop              # Target namespace
+  labels:
+    project: roboshop              # Workload metadata labels
+    tier: backend
+    component: catalogue
+spec:
+  # Injects replica count dynamically from values.yaml (e.g. 1):
+  replicas: {{ .Values.deployment.replicas }}
+
+  # ReplicaSet Selector: Selects pods matching these labels:
+  selector:
+    matchLabels:
+      project: roboshop
+      tier: backend
+      component: catalogue
+
+  # Pod Template: Defines the Pod specification:
+  template:
+    metadata:
+      labels:
+        project: roboshop          # Labels applied to each Pod replica
+        tier: backend
+        component: catalogue
+    spec:
+      containers:
+      - name: catalogue            # Container name
+        # Injects full image repository and tag dynamically:
+        image: "{{ .Values.deployment.imageName }}:{{ .Values.deployment.imageVersion }}"
+        imagePullPolicy: Always    # Ensures latest rebuilt image with same tag is pulled fresh
+
+        # Resource Requests & Limits:
+        resources:
+          requests:
+            cpu: "100m"            # Minimum guaranteed CPU (0.1 vCPU)
+            memory: "128Mi"        # Minimum guaranteed RAM (128 MB)
+          limits:
+            cpu: "100m"            # Maximum allowed CPU cap
+            memory: "128Mi"        # Maximum allowed RAM cap (prevents OOM on node)
+
+        # Health Checks:
+        readinessProbe:
+          tcpSocket:
+            port: 8080             # Checks if TCP port 8080 is open before routing Service traffic
+          failureThreshold: 2      # Marks unready after 2 failed probes
+          periodSeconds: 10        # Checks probe every 10 seconds
+          initialDelaySeconds: 15  # Waits 15 seconds for Node.js app startup & MongoDB handshake
+
+        livenessProbe:
+          httpGet:
+            path: /health          # Performs HTTP GET /health check
+            port: 8080             # Health endpoint port
+          failureThreshold: 2      # Restarts container after 2 failed checks
+          periodSeconds: 10        # Checks probe every 10 seconds
+
+        # ConfigMap Injection:
+        envFrom:
+        - configMapRef:
+            name: catalogue        # Injects MONGO & MONGO_URL from catalogue ConfigMap

@@ -1,0 +1,10 @@
+# ==============================================================================
+# HELM DEVELOPMENT VALUES: CATALOGUE (roboshop-helm/catalogue/values-dev.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Supplies development-specific configurations and overrides for Catalogue.
+# - Usage: `helm install catalogue . -f values-dev.yaml`
+
+configMap:
+  # Development MongoDB connection URL:
+  MONGO_URL: "mongodb://mongodb:27017/catalogue"

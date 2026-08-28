@@ -1,0 +1,17 @@
+# ==============================================================================
+# HELM DEFAULT VALUES: CATALOGUE (roboshop-helm/catalogue/values.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Baseline values for Catalogue microservice templates (configmap.yaml & deployment.yaml).
+# - Override with: `helm install catalogue . -f values-dev.yaml` or `-f values-prod.yaml`.
+
+# ConfigMap Configuration:
+configMap:
+  # Database connection endpoint resolved via CoreDNS inside the roboshop namespace:
+  MONGO_URL: "mongodb://mongodb:27017/catalogue"
+
+# Deployment Configuration:
+deployment:
+  replicas: "1"                    # Default replica count for Catalogue microservice
+  imageName: "ramcharankola2/catalogue"  # Custom optimized Docker Hub repository
+  imageVersion: "1.0.1"            # Target container image version/tag

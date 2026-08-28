@@ -1,0 +1,11 @@
+# ==============================================================================
+# HELM DEFAULT VALUES: MONGODB (roboshop-helm/mongodb/values.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Supplies default parameters interpolated into 'mongodb/templates/deployment.yaml'.
+# - Can be overridden during install: `helm install mongodb . --set deployment.imageVersion=1.0.1`
+
+deployment:
+  replicas: "1"                    # Number of MongoDB database pods (default is 1)
+  imageName: "ramcharankola2/mongodb"  # MongoDB Docker Hub repository
+  imageVersion: "1.0.0"            # Container image tag/version to pull and run

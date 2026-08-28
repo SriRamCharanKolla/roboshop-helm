@@ -1,0 +1,29 @@
+# ==============================================================================
+# HELM TEMPLATE: MONGODB SERVICE (roboshop-helm/mongodb/templates/service.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Exposes the MongoDB database internally to backend microservices (Catalogue, User).
+# - Creates internal DNS name: `mongodb.roboshop.svc.cluster.local`.
+# - Routes client traffic to the active MongoDB Pod listening on port 27017.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb                    # Internal cluster DNS name for the database service
+  namespace: roboshop              # Target namespace
+  labels:
+    project: roboshop              # Metadata labels
+    tier: db
+    component: mongodb
+spec:
+  # Label Selector: Directs microservice connections to MongoDB database pods:
+  selector:
+    project: roboshop              # Matches Pod label 'project: roboshop'
+    tier: db                       # Matches Pod label 'tier: db'
+    component: mongodb            # Matches Pod label 'component: mongodb'
+
+  # Port Mapping:
+  ports:
+  - protocol: TCP                  # Reliable L4 connection-oriented protocol
+    port: 27017                    # Service port accessed by backend services (e.g., mongodb://mongodb:27017/catalogue)
+    targetPort: 27017              # Container port where MongoDB database process listens

@@ -1,0 +1,21 @@
+# ==============================================================================
+# HELM TEMPLATE: CATALOGUE CONFIGMAP (roboshop-helm/catalogue/templates/configmap.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Decouples runtime application configuration from the container image.
+# - Dynamically injects `.Values.configMap.MONGO_URL` based on the active values file
+#   (`values.yaml`, `values-dev.yaml`, or `values-prod.yaml`).
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: catalogue                  # ConfigMap identifier referenced in deployment.yaml
+  namespace: roboshop              # Target namespace
+  labels:
+    project: roboshop              # Metadata labels
+    tier: backend
+    component: catalogue
+data:
+  MONGO: "true"                    # Flags Node.js app to use MongoDB instead of in-memory store
+  # Injects MongoDB connection URL dynamically from Helm values:
+  MONGO_URL: {{ .Values.configMap.MONGO_URL | quote }}

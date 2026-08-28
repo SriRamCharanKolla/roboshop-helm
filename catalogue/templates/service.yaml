@@ -1,0 +1,29 @@
+# ==============================================================================
+# HELM TEMPLATE: CATALOGUE SERVICE (roboshop-helm/catalogue/templates/service.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Exposes the Catalogue microservice internally on port 8080.
+# - Creates cluster DNS entry: `catalogue.roboshop.svc.cluster.local`.
+# - Distributes incoming traffic across Catalogue Pods matching the selector labels.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogue                  # Internal DNS name for the Catalogue service
+  namespace: roboshop              # Target namespace
+  labels:
+    project: roboshop              # Metadata labels
+    tier: backend
+    component: catalogue
+spec:
+  # Label Selector: Directs incoming requests to Catalogue Pods:
+  selector:
+    project: roboshop              # Matches Pod label 'project: roboshop'
+    tier: backend                  # Matches Pod label 'tier: backend'
+    component: catalogue          # Matches Pod label 'component: catalogue'
+
+  # Port Mapping:
+  ports:
+  - protocol: TCP                  # Reliable L4 transport protocol
+    port: 8080                     # Service port accessed by frontend reverse proxy and clients
+    targetPort: 8080               # Container port where Node.js Catalogue process listens

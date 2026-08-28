@@ -1,0 +1,10 @@
+# ==============================================================================
+# HELM PRODUCTION VALUES: CATALOGUE (roboshop-helm/catalogue/values-prod.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Supplies production-specific configurations and overrides for Catalogue.
+# - Usage: `helm install catalogue . -f values-prod.yaml`
+
+configMap:
+  # Production MongoDB connection URL:
+  MONGO_URL: "mongodb://mongodb:27017/catalogue"

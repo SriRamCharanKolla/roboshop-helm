@@ -1,0 +1,13 @@
+# ==============================================================================
+# HELM CHART METADATA: MONGODB (roboshop-helm/mongodb/Chart.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Serves as the manifest definition for the standalone MongoDB Helm chart.
+# - Distinguishes between chart packaging version ('version') and application
+#   software version ('appVersion').
+
+apiVersion: v2                     # Helm API version (v2 is the standard for Helm 3+)
+name: mongodb                      # Name of the Helm chart package
+version: 0.0.1                     # Chart release version (incremented when templates or values change)
+appVersion: 1.0.0                  # Software / MongoDB database image version deployed by this chart
+description: "RoboShop MongoDB Database Helm Chart - version 1.0.0"  # Human-readable package description

@@ -1,0 +1,40 @@
+# ==============================================================================
+# HELM TEMPLATE: MONGODB DEPLOYMENT (roboshop-helm/mongodb/templates/deployment.yaml)
+# ==============================================================================
+# Concept & Purpose:
+# - Manages the MongoDB database Pod lifecycle and replica count via Helm.
+# - Dynamically interpolates `.Values.deployment.replicas`, `.Values.deployment.imageName`,
+#   and `.Values.deployment.imageVersion` from 'mongodb/values.yaml'.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb                    # Deployment workload name
+  namespace: roboshop              # Target project namespace
+  labels:
+    project: roboshop              # Deployment metadata labels
+    tier: db
+    component: mongodb
+spec:
+  # Injects replica count dynamically from values.yaml (e.g. 1):
+  replicas: {{ .Values.deployment.replicas }}
+
+  # ReplicaSet Selector: Selects pods matching these labels:
+  selector:
+    matchLabels:
+      project: roboshop
+      tier: db
+      component: mongodb
+
+  # Pod Template: Defines the MongoDB Container specification:
+  template:
+    metadata:
+      labels:
+        project: roboshop          # Labels applied to each Pod replica
+        tier: db
+        component: mongodb
+    spec:
+      containers:
+      - name: mongodb              # Container name
+        # Injects full image path dynamically (e.g. 'ramcharankola2/mongodb:1.0.0'):
+        image: "{{ .Values.deployment.imageName }}:{{ .Values.deployment.imageVersion }}"
